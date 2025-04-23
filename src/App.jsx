@@ -6,6 +6,8 @@ function App() {
     { id: 2, name: 'Tran Thi B', class: '10A2', age: 17 },
   ]);
 
+  // Bước 3: Thêm sinh viên mới
+  // Commit: feat: thêm sinh viên mới
   const [name, setName] = useState('');
   const [stuClass, setStuClass] = useState('');
   const [age, setAge] = useState('');
@@ -22,6 +24,16 @@ function App() {
     setName('');
     setStuClass('');
     setAge('');
+  };
+
+  // Bước 4: Xoá sinh viên
+  // Commit: feat: xoá sinh viên
+  const handleDelete = (id) => {
+    setStudents((prev) => {
+      const updated = prev.filter((student) => student.id !== id);
+      alert('Xoá sinh viên thành công!');
+      return updated;
+    });
   };
 
   return (
@@ -74,7 +86,10 @@ function App() {
               <td className="border px-4 py-2">{student.class}</td>
               <td className="border px-4 py-2">{student.age}</td>
               <td className="border px-4 py-2">
-                <button className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
+                <button
+                  onClick={() => handleDelete(student.id)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+                >
                   Xoá
                 </button>
               </td>

@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 
 function App() {
-  const [students, setStudents] = useState([
-    { id: 1, name: 'Nguyen Van A', class: '10A1', age: 18 },
-    { id: 2, name: 'Tran Thi B', class: '10A2', age: 17 },
-  ]);
+  const [students, setStudents] = useState([]);
   const [name, setName] = useState('');
   const [stuClass, setStuClass] = useState('');
   const [age, setAge] = useState('');
@@ -12,6 +9,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
 
+  // Load danh sách sinh viên từ localStorage khi trang được tải lại
   useEffect(() => {
     const savedStudents = JSON.parse(localStorage.getItem('students'));
     if (savedStudents) {
@@ -19,12 +17,22 @@ function App() {
     }
   }, []);
 
+  // Lưu danh sách sinh viên vào localStorage mỗi khi danh sách thay đổi
   useEffect(() => {
-    localStorage.setItem('students', JSON.stringify(students));
+    if (students.length > 0) {
+      localStorage.setItem('students', JSON.stringify(students));
+    }
   }, [students]);
 
   const handleAdd = () => {
     if (!name || !stuClass || !age) return;
+    const newStudent = {
+      id: Date.now(),
+      name,
+      class: stuClass,
+      age: parseInt(age),
+    };
+
     if (editId !== null) {
       setStudents((prev) =>
         prev.map((s) =>
@@ -34,13 +42,9 @@ function App() {
       setEditId(null);
       alert('Sửa thông tin sinh viên thành công!');
     } else {
-      const newStudent = {
-        id: Date.now(),
-        name,
-        class: stuClass,
-        age: parseInt(age),
-      };
+      // Thêm sinh viên mới vào danh sách và lưu vào localStorage
       setStudents([...students, newStudent]);
+      alert('Thêm sinh viên mới thành công!');
     }
     setName('');
     setStuClass('');

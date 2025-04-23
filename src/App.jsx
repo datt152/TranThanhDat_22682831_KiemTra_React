@@ -1,17 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
-  const [students, setStudents] = useState([
-    { id: 1, name: 'Nguyen Van A', class: '10A1', age: 18 },
-    { id: 2, name: 'Tran Thi B', class: '10A2', age: 17 },
-  ]);
-
-  // Bước 3: Thêm sinh viên mới
-  // Commit: feat: thêm sinh viên mới
+  const [students, setStudents] = useState([]);
   const [name, setName] = useState('');
   const [stuClass, setStuClass] = useState('');
   const [age, setAge] = useState('');
   const [editId, setEditId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Load danh sách từ localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('students');
+    if (stored) {
+      setStudents(JSON.parse(stored));
+    }
+  }, []);
+
+  // Lưu vào localStorage khi danh sách thay đổi
+  useEffect(() => {
+    localStorage.setItem('students', JSON.stringify(students));
+  }, [students]);
 
   const handleAdd = () => {
     if (!name || !stuClass || !age) return;
@@ -37,8 +45,6 @@ function App() {
     setAge('');
   };
 
-  // Bước 4: Xoá sinh viên
-  // Commit: feat: xoá sinh viên
   const handleDelete = (id) => {
     setStudents((prev) => {
       const updated = prev.filter((student) => student.id !== id);
@@ -53,6 +59,10 @@ function App() {
     setStuClass(student.class);
     setAge(student.age.toString());
   };
+
+  const filteredStudents = students.filter((s) =>
+    s.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="max-w-2xl mx-auto p-4">
@@ -88,6 +98,16 @@ function App() {
         </button>
       </div>
 
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Tìm kiếm theo tên"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full border rounded px-3 py-1"
+        />
+      </div>
+
       <table className="min-w-full border">
         <thead className="bg-gray-100">
           <tr>
@@ -98,7 +118,7 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {students.map((student) => (
+          {filteredStudents.map((student) => (
             <tr key={student.id} className="text-center">
               <td className="border px-4 py-2">{student.name}</td>
               <td className="border px-4 py-2">{student.class}</td>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import StudentItem from './StudentItem';
 
 function App() {
   const [students, setStudents] = useState([]);
@@ -152,25 +153,12 @@ function App() {
         </thead>
         <tbody>
           {classFilteredStudents.map((student) => (
-            <tr key={student.id} className="text-center">
-              <td className="border px-4 py-2">{student.name}</td>
-              <td className="border px-4 py-2">{student.class}</td>
-              <td className="border px-4 py-2">{student.age}</td>
-              <td className="border px-4 py-2 space-x-2">
-                <button
-                  onClick={() => handleEdit(student)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded"
-                >
-                  Sửa
-                </button>
-                <button
-                  onClick={() => handleDelete(student.id)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
-                >
-                  Xoá
-                </button>
-              </td>
-            </tr>
+            <StudentItem
+              key={student.id}
+              student={student}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           ))}
         </tbody>
       </table>

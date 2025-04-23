@@ -1,22 +1,24 @@
 import { useState, useEffect } from 'react';
 
 function App() {
-  const [students, setStudents] = useState([]);
+  const [students, setStudents] = useState([
+    { id: 1, name: 'Nguyen Van A', class: '10A1', age: 18 },
+    { id: 2, name: 'Tran Thi B', class: '10A2', age: 17 },
+  ]);
   const [name, setName] = useState('');
   const [stuClass, setStuClass] = useState('');
   const [age, setAge] = useState('');
   const [editId, setEditId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedClass, setSelectedClass] = useState('');
 
-  // Load danh sách từ localStorage
   useEffect(() => {
-    const stored = localStorage.getItem('students');
-    if (stored) {
-      setStudents(JSON.parse(stored));
+    const savedStudents = JSON.parse(localStorage.getItem('students'));
+    if (savedStudents) {
+      setStudents(savedStudents);
     }
   }, []);
 
-  // Lưu vào localStorage khi danh sách thay đổi
   useEffect(() => {
     localStorage.setItem('students', JSON.stringify(students));
   }, [students]);
@@ -64,6 +66,18 @@ function App() {
     s.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const classFilteredStudents = selectedClass
+    ? filteredStudents.filter((s) => s.class === selectedClass)
+    : filteredStudents;
+
+  const handleClassChange = (e) => {
+    setSelectedClass(e.target.value);
+  };
+
+  const classOptions = [
+    ...new Set(students.map((student) => student.class)),
+  ];
+
   return (
     <div className="max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Danh sách sinh viên</h1>
@@ -108,6 +122,21 @@ function App() {
         />
       </div>
 
+      <div className="mb-4">
+        <select
+          value={selectedClass}
+          onChange={handleClassChange}
+          className="w-full border rounded px-3 py-1"
+        >
+          <option value="">Chọn lớp</option>
+          {classOptions.map((className, index) => (
+            <option key={index} value={className}>
+              {className}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <table className="min-w-full border">
         <thead className="bg-gray-100">
           <tr>
@@ -118,7 +147,7 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {filteredStudents.map((student) => (
+          {classFilteredStudents.map((student) => (
             <tr key={student.id} className="text-center">
               <td className="border px-4 py-2">{student.name}</td>
               <td className="border px-4 py-2">{student.class}</td>
@@ -144,4 +173,5 @@ function App() {
     </div>
   );
 }
+
 export default App;

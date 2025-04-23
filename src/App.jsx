@@ -11,16 +11,27 @@ function App() {
   const [name, setName] = useState('');
   const [stuClass, setStuClass] = useState('');
   const [age, setAge] = useState('');
+  const [editId, setEditId] = useState(null);
 
   const handleAdd = () => {
     if (!name || !stuClass || !age) return;
-    const newStudent = {
-      id: Date.now(),
-      name,
-      class: stuClass,
-      age: parseInt(age),
-    };
-    setStudents([...students, newStudent]);
+    if (editId !== null) {
+      setStudents((prev) =>
+        prev.map((s) =>
+          s.id === editId ? { ...s, name, class: stuClass, age: parseInt(age) } : s
+        )
+      );
+      setEditId(null);
+      alert('Sửa thông tin sinh viên thành công!');
+    } else {
+      const newStudent = {
+        id: Date.now(),
+        name,
+        class: stuClass,
+        age: parseInt(age),
+      };
+      setStudents([...students, newStudent]);
+    }
     setName('');
     setStuClass('');
     setAge('');
@@ -34,6 +45,13 @@ function App() {
       alert('Xoá sinh viên thành công!');
       return updated;
     });
+  };
+
+  const handleEdit = (student) => {
+    setEditId(student.id);
+    setName(student.name);
+    setStuClass(student.class);
+    setAge(student.age.toString());
   };
 
   return (
@@ -66,7 +84,7 @@ function App() {
           onClick={handleAdd}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
         >
-          Thêm sinh viên
+          {editId !== null ? 'Cập nhật sinh viên' : 'Thêm sinh viên'}
         </button>
       </div>
 
@@ -85,7 +103,13 @@ function App() {
               <td className="border px-4 py-2">{student.name}</td>
               <td className="border px-4 py-2">{student.class}</td>
               <td className="border px-4 py-2">{student.age}</td>
-              <td className="border px-4 py-2">
+              <td className="border px-4 py-2 space-x-2">
+                <button
+                  onClick={() => handleEdit(student)}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded"
+                >
+                  Sửa
+                </button>
                 <button
                   onClick={() => handleDelete(student.id)}
                   className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
